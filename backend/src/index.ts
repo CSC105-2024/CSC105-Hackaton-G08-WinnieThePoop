@@ -10,12 +10,13 @@ const app = new Hono()
 export const db = new PrismaClient()
 
 app.use('*', cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
-  allowHeaders: ['Content-Type', 'Authorization'],
+  origin: ['http://localhost:5174', 'http://127.0.0.1:5174'],
+  allowHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   exposeHeaders: ['Set-Cookie'],
   maxAge: 600,
+  
 }));
 app.use('*', async (c, next) => {
   console.log(`[${c.req.method}] ${c.req.url}`);
@@ -37,6 +38,7 @@ serve({
   fetch: app.fetch,
   port: 3000
 }, (info) => {
+  
   console.log(`Server is running on http://localhost:${info.port}`)
 })
 
