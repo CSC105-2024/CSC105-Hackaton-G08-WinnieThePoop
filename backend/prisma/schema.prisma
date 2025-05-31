@@ -1,0 +1,44 @@
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+enum RecordStatus {
+  Normal
+  Worrisome
+  Abnormal
+}
+enum RecordColor {
+  Brown
+  Yellow
+  Green
+  Red
+  Black
+  Gray
+}
+model User {
+  UserId        Int   @id @default(autoincrement())
+  UserPassword      String
+  UserEmail     String   @unique
+  Username      String 
+  UserProfilePic String @default("Men1")
+  
+  Record Record[]
+}
+
+model Record {
+  RecordId Int @id @default(autoincrement())
+  UserId   Int
+  RecordName String
+  RecordDescription String?
+  RecordDate DateTime @default(now())
+  RecordColor RecordColor @default(Brown)
+  RecordStatus RecordStatus @default(Normal)
+  User User @relation(fields: [UserId], references: [UserId])
+}
