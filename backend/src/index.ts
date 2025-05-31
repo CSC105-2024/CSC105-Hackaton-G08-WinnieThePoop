@@ -32,3 +32,7 @@ serve({
 }, (info) => {
   console.log(`Server is running on http://localhost:${info.port}`)
 })
+
+process.on('beforeExit', async () => {
+  await db.$disconnect()
+})

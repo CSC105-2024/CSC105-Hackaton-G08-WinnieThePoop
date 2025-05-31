@@ -25,7 +25,7 @@ function Profile() {
   const [email,setEmail] = useState('');
   const [, setLoading] = useState(true);
   const [, setError] = useState(null);
-  const [signupDate, setSignupDate] = useState('');
+
   //pictures
   const pictures = [
     { name: 'Men1', src: Men1 },
@@ -51,13 +51,11 @@ function Profile() {
 
     console.log("Profile response:", response.data);
 
-    setUsername(response.data.UserName);
-    setEmail(response.data.User_Email);
-    setPhone(response.data.User_Phone);
+    setUsername(response.data.Username);
+    setEmail(response.data.UserEmail);
 
-    const picture = response.data.User_picture;
+    const picture = response.data.UserProfilePic;
 
-    // Check if it's a full URL (e.g., Cloudinary), otherwise fallback to internal SVG list
     if (picture?.startsWith('http')) {
       setProfilePicture(picture);
     } else {
@@ -68,14 +66,6 @@ function Profile() {
       setProfilePicture(foundPicture?.src || Men1);
     }
 
-    
-    const date = new Date(response.data.User_Signup_Date);
-    const formattedDate = date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
-    setSignupDate(formattedDate);
   } catch (err) {
     console.error("Error fetching user data:", err);
     setError("Failed to fetch user data");
@@ -83,8 +73,6 @@ function Profile() {
     setLoading(false);
   }
 };
-
-
   useEffect(() => {
     fetchuser();
   }, []);

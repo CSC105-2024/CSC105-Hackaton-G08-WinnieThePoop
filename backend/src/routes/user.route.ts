@@ -6,7 +6,7 @@ const userRouter = new Hono();
 userRouter.post('/signup', UserController.createUserController);
 userRouter.post('/login', UserController.loginUserController);
 userRouter.get('/profile', authMiddleware,UserController.fetchProfileController);
-userRouter.put('/profile', authMiddleware,UserController.updateProfileController);
+userRouter.patch('/profile', authMiddleware,UserController.updateProfileController);
 userRouter.post('/profile/upload-profile-pic', authMiddleware, UserController.uploadProfilePicController);
 
 export default userRouter;

@@ -38,13 +38,13 @@ export async function updateProfile(
   const updateData: any = {};
 
   if (data.NewName) {
-    updateData.UserName = data.NewName;
+    updateData.Username = data.NewName;
   }
   if (data.NewEmail) {
-    updateData.User_Email = data.NewEmail;
+    updateData.UserEmail = data.NewEmail;
   }
   if (data.NewPicture) {
-    updateData.User_picture = data.NewPicture;
+    updateData.UserProfilePic = data.NewPicture;
   }
 
   await db.user.update({

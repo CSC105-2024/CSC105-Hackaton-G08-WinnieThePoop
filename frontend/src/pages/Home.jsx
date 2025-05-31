@@ -17,7 +17,7 @@ function Home() {
 
   const [bursts, setBursts] = useState([]);
 
-  // Typewriter effect
+  // Typewriter effect    
   useEffect(() => {
     let i = -1;
     const interval = setInterval(() => {
@@ -50,42 +50,42 @@ function Home() {
   return (
     <div className="min-h-screen w-full py-10 relative overflow-hidden">
       <div className="flex flex-col font-poppins font-bold w-full">
-        <h1 className="text-5xl text-gray-800">Hello, Welcome 👋🏻</h1>
-        <h2 className="mt-2 text-2xl text-gray-800">
+        <h1 className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl">Hello, Welcome 👋🏻</h1>
+        <h2 className="mt-2 text-xl lg:text-2xl text-gray-800">
           ?- Your poop status of TODAY! 🚽 🧻 💩
         </h2>
       </div>
 
       <div className="flex justify-center items-center mt-10">
         <div
-          className="w-[784px] h-[431px] border-4 rounded-lg bg-white bg-cover bg-center relative"
+          className="w-[520px] h-[300px] sm:w-[580px] sm:h-[320px] md:w-[600px] md:h-[350px] lg:w-[784px] lg:h-[431px] border-4 rounded-lg bg-white bg-cover bg-center relative"
           style={{ backgroundImage: `url(${Gray})` }}
         >
-          <h1 className="font-poppins text-8xl flex justify-center items-center mt-10">00</h1>
+          <h1 className="font-poppins text-5xl sm:text-5xl md:text-6xl lg:text-8xl flex justify-center items-center mt-10">00</h1>
 
           <div className="flex justify-center items-center">
             <img
               src={logo}
               alt="Neutral"
               onClick={handleLogoClick}
-              className="w-50 h-50 mt-10 transition-transform duration-150 transform hover:scale-105 active:scale-90 cursor-pointer"
+              className="lg:w-50 lg:h-50 mt-10 transition-transform duration-150 transform hover:scale-105 active:scale-90 cursor-pointer"
             />
           </div>
         </div>
       </div>
 
-      <div className="flex justify-around items-center mt-10">
-        <div className="ml-20">
+     <div className="flex flex-col lg:flex-row justify-around items-center mt-10 gap-6 lg:gap-0">
+        <div className="order-1 lg:order-2">
+          <div className="text-2xl font-bold flex justify-center items-center border-4 w-[300px] sm:w-[500px] md:w-[600px] h-[98px] rounded-lg">
+            {displayedText}
+          </div>
+        </div>
+        <div className="order-2 lg:order-1">
           <img
             src={Please}
             alt="Please"
-            className={`${isTyping ? 'animate-shake' : ''}`}
+            className={`w-32 sm:w-36 ${isTyping ? 'animate-shake' : ''}`}
           />
-        </div>
-        <div>
-          <div className=" -ml-20 text-2xl font-bold flex justify-center items-center border-4 w-[600px] h-[98px] rounded-lg">
-            {displayedText}
-          </div>
         </div>
       </div>
 

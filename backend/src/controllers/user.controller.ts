@@ -99,9 +99,9 @@ export async function updateProfileController(c: Context) {
     const body = await c.req.json();
 
     await updateProfile(user.id, {
-      NewName: body.name,
-      NewEmail: body.email,
-      NewPicture: body.User_picture,
+      NewName: body.Username,
+      NewEmail: body.UserEmail,
+      NewPicture: body.UserProfilePic,
     });
 
     return c.json({ message: 'Profile updated successfully' });

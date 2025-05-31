@@ -3,9 +3,9 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Logo from '../assets/LogoF.svg';
+import LogoF from '../assets/LogoF.svg';
 import Hidden from '../assets/HiddenIcon.svg';
-import Reveal from '../assets/showIcon.svg';
+import Reveal from '../assets/ShowIcon.svg';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
 
@@ -27,7 +27,7 @@ function Login() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/users/login', data);
+      const response = await axios.post('http://localhost:3000/users/login', data);
       const { token } = response.data;
   
       localStorage.setItem('token', token);
@@ -36,8 +36,7 @@ function Login() {
   
       localStorage.setItem('userId', userId);
   
-      console.log('User ID:', userId); // or use it however you want
-  
+      console.log('User ID:', userId); 
       navigate('/home');
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -64,20 +63,20 @@ function Login() {
       <div className="flex flex-col justify-center items-center h-screen">
         {/* Logo */}
         <div>
-          <img className="w-[120px] h-[120px] sm:w-[135px] sm:h-[135px] md:w-[150px] md:h-[150px] lg:w-[200px] lg:h-[200px] 
-            transition-all duration-200 ease-in-out transform" src={Logo} alt="Logo" />
+          <img className="w-[120px] h-[120px] sm:w-[120px] sm:h-[120px] md:w-[135px] md:h-[135px] lg:w-[150px] lg:h-[150px] 
+            transition-all duration-200 ease-in-out transform" src={LogoF} alt="Logo" />
         </div>
 
         {/* Welcome Message */}
         <div className="flex flex-col justify-center items-center font-poppins text-honeyPot mt-2 sm:mt-2 md:mt-3 lg:mt-4 sm: text-xl md:text-2xl lg:text-[32px]
         transition-all duration-200 ease-in-out transform">
-          <div className="font-black">Welcome back Poo-kie! </div>
-          <div className="-mt-2 font-black">Ready to drop some data?</div>
+          <div className=" font-bold text-hooneyPot ">Welcome back Poo-kie!</div>
+          <div className="-mt-2 font-bold text-honeyPot">Ready to drop some data?</div>
         </div>
 
         {/* Login Title */}
-        <div className="font-poppins font-black sm:text-base md:text-xl lg:text-[24px] text-poohShirt my-6 sm:my-6 md:my-5 lg:my-[20px] 
-        transition-all duration-200 ease-in-out transform ">LOGIN</div>
+        <div className="font-poppins font-bold sm:text-base md:text-xl lg:text-[24px] my-6 sm:my-6 md:my-5 lg:my-[20px] 
+        transition-all duration-200 ease-in-out transform text-poohShirt">LOGIN</div>
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-[300px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[427px] flex flex-col items-center 
@@ -87,7 +86,7 @@ function Login() {
             <input
               {...register('email')}
               placeholder="example@mail.com"
-              className="w-full h-[35px] sm:h-[35px] md:h-[37px] lg:h-[40px] border-2 rounded-[8px] text-[12px] sm:text-[12px] md:text-[12px] lg:text-[14px] pl-3"
+              className="w-full h-[35px] sm:h-[35px] md:h-[37px] lg:h-[40px] border-3 rounded-[8px] text-[12px] sm:text-[12px] md:text-[12px] lg:text-[14px] pl-3"
             />
             {errors.email && <p className="text-red-500 text-xs sm:text-xs md:text-xs lg:text-sm mt-1">{errors.email.message}</p>}
           </div>
@@ -97,7 +96,7 @@ function Login() {
               {...register('password')}
               type={showPassword ? 'text' : 'password'} 
               placeholder="Password"
-              className="w-full h-[35px] sm:h-[35px] md:h-[37px] lg:h-[40px] border-2 rounded-[8px] text-[12px] sm:text-[12px] md:text-[12px] lg:text-[14px] pl-3" 
+              className="w-full h-[35px] sm:h-[35px] md:h-[37px] lg:h-[40px] border-3 rounded-[8px] text-[12px] sm:text-[12px] md:text-[12px] lg:text-[14px] pl-3" 
             />
             {/* encrypt */}
             <button type="button" onClick={togglePasswordVisibility} className="absolute right-3 cursor-pointer top-[41px] sm:top-[41px] md:top-[43px] lg:top-[45px] transform -translate-y-1/2 hover:scale-105">
@@ -116,7 +115,7 @@ function Login() {
           <div className="mt-[21px] w-full flex justify-center">
             <button
               type="submit"
-              className="w-[140px] h-[35px] text-xs md:w-[150px] md:h-[40px] md:text-sm lg:w-[180px] lg:h-[40px]  lg:text-base rounded-[4px] bg-honeyGold font-poppins font-semibold border-2 
+              className="w-[140px] h-[35px] text-xs md:w-[150px] md:h-[40px] md:text-sm lg:w-[180px] lg:h-[40px]  lg:text-base border-3 rounded-[4px] bg-honeyGold font-poppins font-semibold 
                 transition-all duration-200 ease-in-out transform hover:scale-105 hover:shadow-lg cursor-pointer">
               Login
             </button>

@@ -39,10 +39,8 @@ const fetchuser = async () => {
     });
 
     console.log("Profile response:", response.data);
+    const picture = response.data.UserProfilePic;
 
-    const picture = response.data.User_picture;
-
-    // Check if it's a full URL (e.g., Cloudinary), otherwise fallback to internal SVG list
     if (picture?.startsWith('http')) {
       setProfilePicture(picture);
     } else {
@@ -60,10 +58,10 @@ const fetchuser = async () => {
     setLoading(false);
   }
 };
+  useEffect(() => {
+    fetchuser();
+  }, []);
 
-useEffect(() => {
-  fetchuser();
-}, []);
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -77,7 +75,7 @@ useEffect(() => {
               to="/home"
               className={({ isActive }) =>
                 `transition hover:text-bubblegum focus:outline-none ${
-                  isActive ? "text-barbie" : "text-gray-700"
+                  isActive ? "text-honeyPot" : "text-gray-700"
                 }`
               }
             >
@@ -87,7 +85,7 @@ useEffect(() => {
               to="/history"
               className={({ isActive }) =>
                 `transition hover:text-bubblegum focus:outline-none ${
-                  isActive ? "text-barbie" : "text-gray-700"
+                  isActive ? "text-honeyPot" : "text-gray-700"
                 }`
               }
             >
@@ -97,7 +95,7 @@ useEffect(() => {
               to="/overview"
               className={({ isActive }) =>
                 `transition hover:text-bubblegum focus:outline-none ${
-                  isActive ? "text-barbie" : "text-gray-700"
+                  isActive ? "text-honeyPot" : "text-gray-700"
                 }`
               }
             >

@@ -38,7 +38,6 @@ function ProfileEdit() {
 
   const [formData, setFormData] = useState({
     username: '',
-    phone: '',
   });
 
   const handleProfilePicSelect = async (pic) => {
@@ -49,7 +48,6 @@ function ProfileEdit() {
       const token = localStorage.getItem('token');
       await axios.patch(`http://localhost:3000/users/profile`, {
         NewName: formData.username,
-        NewPhone: formData.phone,
         NewPicture: pic.name,
       }, {
         headers: { Authorization: `Bearer ${token}` },
@@ -83,13 +81,13 @@ function ProfileEdit() {
 
       const token = localStorage.getItem('token');
       await axios.patch(`http://localhost:3000/users/profile`, {
-        NewName: formData.username,
-        NewPhone: formData.phone,
-        NewPicture: uploadedImageUrl,
-      }, {
+        Username: formData.username,
+        UserProfilePic: uploadedImageUrl,
+      },
+      {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+      console.log(import.meta.env.VITE_CLOUDINARY_CLOUD_NAME, import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
       console.log('Cloudinary image uploaded and saved');
     } catch (error) {
       console.error('Cloudinary upload failed:', error);
@@ -104,16 +102,16 @@ function ProfileEdit() {
       });
 
       setFormData({
-        username: response.data.UserName || '',
-        phone: response.data.User_Phone || '',
+        username: response.data.Username || '',
+        email: response.data.UserEmail || '',
       });
 
-      const pictureName = response.data.User_picture?.toLowerCase().replace(/\s+/g, '').replace('.svg', '');
-      const foundPicture = pictures.find(p =>
+      const pictureName = response.data.UserProfilePic?.toLowerCase().replace(/\s+/g, '').replace('.svg', '');
+      const foundPicture = pictures.find(p => 
         p.name.toLowerCase().replace(/\s+/g, '') === pictureName
       );
 
-      setProfilePicture(foundPicture?.src || response.data.User_picture || Men1);
+      setProfilePicture(foundPicture?.src || response.data.UserProfilePic || Men1);
     } catch (err) {
       console.error('Error fetching user data:', err);
       setError('Failed to fetch user data');
@@ -132,23 +130,24 @@ function ProfileEdit() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('token');
-      await axios.patch(`http://localhost:3000/users/profile`, {
-        name: formData.username,
-        phone: formData.phone,
-        picture: profilePicture.includes('cloudinary') ? profilePicture :
-          pictures.find(p => p.src === profilePicture)?.name || 'Men1',
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log('Update success');
-      navigate('/profile');
-    } catch (err) {
-      console.error('Failed to update:', err);
-    }
-  };
+  e.preventDefault();
+  try {
+    const token = localStorage.getItem('token');
+    await axios.patch(`http://localhost:3000/users/profile`, {
+      Username: formData.username,
+      UserProfilePic: profilePicture.includes('cloudinary') 
+        ? profilePicture 
+        : pictures.find(p => p.src === profilePicture)?.name || 'Men1',
+    }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log('Update success');
+    navigate('/profile');
+  } catch (err) {
+    console.error('Failed to update:', err);
+  }
+};
+
 
   return (
     <div className="w-full h-screen flex flex-col">
