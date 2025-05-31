@@ -76,7 +76,8 @@ function Home() {
 
      <div className="flex flex-col lg:flex-row justify-around items-center mt-10 gap-6 lg:gap-0">
         <div className="order-1 lg:order-2">
-          <div className="text-2xl font-bold flex justify-center items-center border-4 w-[300px] sm:w-[500px] md:w-[600px] h-[98px] rounded-lg">
+          <div className="lg:-ml-90 text-2xl font-bold flex justify-center items-center border-4 
+          w-[450px] sm:w-[500px] md:w-[600px] h-[98px] rounded-lg ">
             {displayedText}
           </div>
         </div>
