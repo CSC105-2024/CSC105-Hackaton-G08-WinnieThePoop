@@ -18,6 +18,8 @@ import fart6 from '../assets/sounds/fart6.mp3';
 import fart7 from '../assets/sounds/fart7.mp3';
 import fart8 from '../assets/sounds/fart8.mp3';
 import fart9 from '../assets/sounds/fart9.mp3';
+import { format } from 'date-fns';
+import AddEditModal from '../components/modals/AddEdit.jsx';
 
 function Home() {
   const { width } = useWindowSize();
@@ -31,12 +33,13 @@ function Home() {
   const clickSounds = [
   fart1, fart2, fart3, fart4, fart5,
   fart6, fart7, fart8, fart9,];
-    
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [showAddModal, setShowAddModal] = useState(false);
   const [bursts, setBursts] = useState([]);
-
+      const [poopings, setPoopings] = useState([]);
   const handleLogoClick = (e) => {
   const id = Date.now();
-
+    
   // Play a random sound
   const randomSound = clickSounds[Math.floor(Math.random() * clickSounds.length)];
   const audio = new Audio(randomSound);
@@ -52,6 +55,16 @@ function Home() {
     setBursts((prev) => prev.filter((b) => b.id !== id));
   }, 800);
 };
+
+const handleAddNewPooping = (newPooping) => {
+    const poopingWithDate = {
+      ...newPooping,
+      date: selectedDate,
+      id: Math.max(...poopings.map(p => p.id), 0) + 1
+    };
+    setPoopings([...poopings, poopingWithDate]);
+    handleCloseAddModal();
+  };
 
   const fetchRecordCountbyDate = async () => {
   try {
@@ -149,7 +162,13 @@ useEffect(() => {
     }, 60);
     return () => clearInterval(interval);
   }, []);
+  const handleOpenAddModal = () => {
+    setShowAddModal(true);
+  };
 
+  const handleCloseAddModal = () => {
+    setShowAddModal(false);
+  };
   return (
     <div className="min-h-screen w-full py-10 relative overflow-hidden">
       <div className="flex flex-col font-poppins font-bold w-full">
@@ -209,8 +228,17 @@ useEffect(() => {
 
       {!isMobile && (
         <div className="fixed bottom-8 right-8 hidden sm:block md:block lg:block lg:h-30 lg:w-30 cursor-pointer hover:scale-105 transition-transform duration-200 ease-in-out z-50">
-          <img src={AddIcon} alt="Add Icon" />
+          <img src={AddIcon} onClick={handleOpenAddModal} alt="Add Icon" />
         </div>
+      )}
+      {/* Add Modal */}
+      {showAddModal && (
+        <AddEditModal
+          isOpen={showAddModal}
+          onClose={handleCloseAddModal}
+          onSave={handleAddNewPooping}
+          isEditMode={false}
+        />
       )}
     </div>
   );
