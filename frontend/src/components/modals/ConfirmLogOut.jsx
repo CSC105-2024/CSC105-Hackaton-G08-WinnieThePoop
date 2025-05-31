@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cry from "../../assets/Poop/Cry.svg";
 
-function ConfirmLogout({onClose }) {
-    const navigate = useNavigate();
-    const [isClosing, setIsClosing] = useState(false);
+function ConfirmLogout({ onClose }) {
+  const navigate = useNavigate();
+  const [isClosing, setIsClosing] = useState(false);
 
   const closeModal = () => {
     setIsClosing(true);
@@ -13,56 +14,53 @@ function ConfirmLogout({onClose }) {
     }, 300);
   };
 
+  const handleBackdropClick = (e) => {
+    // Check if the click is on the backdrop (not the modal content)
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("userToken");
     navigate("/login");
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-        <div className={`bg-white border-3 p-10 rounded-lg shadow-lg font-poppins text-center w-full max-w-md relative ${
-            isClosing ? 'animate-scale-out' : 'animate-scale-in'}`}>
-            {/* Title */}
-            <h2 className="text-xl font-poppins font-bold mb-4">Are you sure?</h2>
-            <h3 className="text-sm font-poppins font-bold mb-4">Please don't go!</h3>
+    <div 
+      className="fixed inset-0 flex items-center justify-center bg-black/40 z-50"
+      onClick={handleBackdropClick}
+    >
+      <div 
+        className={`bg-white border-3 p-7 rounded-lg shadow-lg font-poppins text-center w-65 h-50 sm:w-90 sm:h-45 relative ${isClosing ? 'animate-scale-out' : 'animate-scale-in'}`}
+        onClick={(e) => e.stopPropagation()} 
+      >
+        <img
+          src={Cry}
+          alt="Cry"
+          className="absolute -top-18 sm:-top-20 -right-[-5px] w-25 h-25 sm:w-30 sm:h-30"
+        />
 
-            {/* Action Buttons */}
-            <div className="flex justify-between items-center w-full mt-2 gap-4">
-            {/* Cancel button */}
-            <button 
-                onClick={closeModal} 
-                className="text-sm font-black px-4 py-1 sm:px-4 sm:py-1 md:px-4 md:py-1 lg:px-4 lg:py-2 bg-gray-300 border-2 text-gray-600 
-                rounded-lg hover:bg-gray-400 hover:scale-105 transition"
-            >
-                Cancel
-            </button>
+        {/* Title */}
+        <h2 className="text-xl font-poppins font-bold mb-3">Are you sure?</h2>
+        <h3 className="text-[13px] font-poppins font-bold mb-5 text-honeyPot">Please don't go!</h3>
 
-            {/* sign out */}
-            <button 
-                onClick={handleLogout} 
-                className="text-sm font-black font-poppins px-4 py-1 sm:px-4 sm:py-1 md:px-4 md:py-1 lg:px-4 lg:py-2 bg-red-400 text-black 
-                rounded-lg border-2 border-black hover:bg-red-600 hover:scale-105 transition"
-            >
-                Log out
-            </button>
-
-            {/* <button
-            onClick={onCancel}
-            className="px-4 py-2 bg-[#FF9BDB] text-black text-[15px] rounded-md border-black border-2 hover:bg-[#F55EBB]"
+        {/* Action Buttons */}
+        <div className="flex justify-center space-x-3">
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-honeyGold text-black text-[15px] rounded-md border-black border-3 hover:bg-[#FFE85B]"
+          >
+            Yes
+          </button>
+          <button
+            onClick={closeModal}
+            className="px-4 py-2 bg-poohShirt text-black text-[15px] rounded-md border-black border-3 hover:bg-[#FF5050]"
           >
             No
           </button>
-          <button
-            onClick={onConfirm}
-            className="px-4 py-2 bg-[#E6FFD7] text-black text-[15px] rounded-md border-black border-2 hover:bg-lime-200"
-          >
-            Yes
-          </button> */}
-            
-
-          </div>
-                
         </div>
+      </div>
     </div>
   );
 }
