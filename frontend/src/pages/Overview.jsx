@@ -1,10 +1,13 @@
-
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import isoWeek from "dayjs/plugin/isoWeek";
 import next from "../assets/next.svg";
 import prev1 from "../assets/prev1.svg";
+import Please from "../assets/Poop/Please.svg";
+import Good from "../assets/Poop/Good.svg";
+import Sus from "../assets/Poop/Sus.svg";
+import GoSeeDoc from "../assets/Poop/GoSeeDoc.svg";
 
 dayjs.extend(weekday);
 dayjs.extend(isoWeek);
@@ -50,24 +53,117 @@ const Overview = () => {
     return days;
   };
 
+  const dateStatuses = {
+    "2025-06-01": "normal",
+    "2025-06-02": "abnormal",
+    "2025-06-04": "worrisome",
+  };
+
+  const recordCounts = {
+    "2025-06-01": 1,
+    "2025-06-02": 2,
+    "2025-06-04": 1,
+  };
+
+  const getStatusColor = (date) => {
+    const dateString = currentDate.date(date).format("YYYY-MM-DD");
+    const status = dateStatuses[dateString];
+    const recordCount = recordCounts[dateString] ?? 0;
+
+    if (recordCount === 0) return "bg-gray-300";
+
+    switch (status) {
+      case "normal":
+        return "bg-[#C4F5C6]";
+      case "abnormal":
+        return "bg-[#FF6D6D]";
+      case "worrisome":
+        return "bg-[#FFF19C]";
+      default:
+        return "";
+    }
+  };
+
+  const getBoxColor = () => {
+    const selectedDay = currentDate.date(selectedDate).format("YYYY-MM-DD");
+    const status = dateStatuses[selectedDay];
+    const recordCount = recordCounts[selectedDay] ?? 0;
+
+    if (recordCount === 0) return "bg-gray-200";
+
+    switch (status) {
+      case "normal":
+        return "bg-[#C4F5C6]";
+      case "abnormal":
+        return "bg-[#FF6D6D]";
+      case "worrisome":
+        return "bg-[#FFF19C]";
+      default:
+        return "bg-gray-200";
+    }
+  };
+
+  const getLatestStatus = () => {
+    const selectedDay = currentDate.date(selectedDate).format("YYYY-MM-DD");
+    const status = dateStatuses[selectedDay];
+    const recordCount = recordCounts[selectedDay] ?? 0;
+
+    if (recordCount === 0) {
+      return {
+        text: "Have you poop yet, Please tell us😔",
+        icon: Please,
+      };
+    }
+
+    switch (status) {
+      case "normal":
+        return {
+          text: "Everything is okay, Keep do it! 😛",
+          icon: Good,
+        };
+      case "abnormal":
+        return {
+          text: "You should go see a doctor!",
+          icon: GoSeeDoc,
+        };
+      case "worrisome":
+        return {
+          text: "Hmmm, Interesting... 🤔",
+          icon: Sus,
+        };
+      default:
+        return {
+          text: "Have you poop yet, Please tell us😔",
+          icon: Please,
+        };
+    }
+  };
+
+  const { text: displayedText, icon: statusIcon } = getLatestStatus();
+
   const handlePrevMonth = () => {
     setCurrentDate(currentDate.subtract(1, "month"));
+    setSelectedDate(1);
   };
 
   const handleNextMonth = () => {
     setCurrentDate(currentDate.add(1, "month"));
+    setSelectedDate(1);
   };
 
   const renderCalendarCell = (date, currentMonth) => (
     <td
       key={`${date}-${currentMonth}`}
-      className={`border-2 align-top h-20 sm:h-24 p-0.5 sm:p-1 text-xs ${
-        currentMonth ? "text-black" : "text-gray-400"
+      className={`border-2 align-top h-20 sm:h-24 p-0.5 sm:p-1 text-base relative ${
+        currentMonth ? "text-black" : "text-gray"
       }`}
       onClick={() => currentMonth && setSelectedDate(date)}
     >
+      {currentMonth && (
+        <div className={`absolute top-9 left-0 w-full h-5 ${getStatusColor(date)}`}></div>
+      )}
       <div
-        className={`ml-1 font-semibold inline-block px-2 py-1 rounded-full ${
+        className={`ml-1 font-bold inline-block px-2 py-1 rounded-full ${
           currentMonth && date === selectedDate ? "bg-[#FFDAA1]" : ""
         }`}
       >
@@ -80,7 +176,9 @@ const Overview = () => {
     <>
       <div className="flex justify-start items-center gap-2 mb-4">
         <button onClick={handlePrevMonth}><img src={prev1} alt="prev" /></button>
-        <h2 className="text-2xl font-bold font--poppins uppercase tracking-wide">{currentDate.format("MMMM YYYY")}</h2>
+        <h2 className="text-2xl font-bold font-poppins uppercase tracking-wide">
+          {currentDate.format("MMMM YYYY")}
+        </h2>
         <button onClick={handleNextMonth}><img src={next} alt="next" /></button>
       </div>
       <div className="overflow-x-auto">
@@ -88,7 +186,7 @@ const Overview = () => {
           <thead>
             <tr>
               {daysOfWeek.map((day) => (
-                <th key={day} className="bg-[#e7f1a8] text-[10px] sm:text-sm md:text-base font-poppins font-medium text-black border-2 border-gray p-1 sm:p-2 w-[14.28%]">{day}</th>
+                <th key={day} className="bg-[#CFE6F6] text-[15px] sm:text-sm md:text-base font-poppins font-bold border-2 border-gray p-1 sm:p-2 w-[14.28%]">{day}</th>
               ))}
             </tr>
           </thead>
@@ -106,6 +204,20 @@ const Overview = () => {
               ))}
           </tbody>
         </table>
+        <div className="flex flex-col lg:flex-row justify-around items-center mt-10 gap-6 lg:gap-0">
+          <div className="order-1 lg:order-2 w-full max-w-xl">
+            <div className={`text-2xl font-bold text-center border-4 w-full h-24 rounded-lg flex items-center justify-center px-4 transition-colors duration-300 ${getBoxColor()}`}>
+              {displayedText}
+            </div>
+          </div>
+          <div className="order-2 lg:order-1">
+            <img
+              src={statusIcon}
+              alt="Status Icon"
+              className="w-32 sm:w-36"
+            />
+          </div>
+        </div>
       </div>
     </>
   );
@@ -113,16 +225,18 @@ const Overview = () => {
   const renderMobileCalendar = () => (
     <>
       <div className="flex justify-start items-center gap-2 mb-2 bg-white p-2 rounded-lg">
-        <button onClick={handlePrevMonth} ><img src={prev1} alt="prev" className="w-4 h-4" /></button>
-        <h2 className="text-xl font-bold font-poppins tracking-wide">{currentDate.format("MMMM YYYY").toUpperCase()}</h2>
+        <button onClick={handlePrevMonth}><img src={prev1} alt="prev" className="w-4 h-4" /></button>
+        <h2 className="text-xl font-bold font-poppins tracking-wide">
+          {currentDate.format("MMMM YYYY").toUpperCase()}
+        </h2>
         <button onClick={handleNextMonth}><img src={next} alt="next" className="w-4 h-4" /></button>
       </div>
-      <div className="overflow-x-auto bg-white ">
+      <div className="overflow-x-auto bg-white">
         <table className="table-fixed border-collapse w-full text-xs">
           <thead>
             <tr>
               {shortDaysOfWeek.map((day) => (
-                <th key={day} className="bg-[#e7f1a8] font-poppins font-medium text-black border border-gray p-1 w-[14.28%]">{day}</th>
+                <th key={day} className="bg-[#CFE6F6] font-poppins text-black border-2 border-gray p-1 w-[14.28%]">{day}</th>
               ))}
             </tr>
           </thead>
@@ -138,14 +252,17 @@ const Overview = () => {
                   {week.map(({ date, currentMonth }) => (
                     <td
                       key={`mobile-${date}-${currentMonth}`}
-                       className={`border border-gray align-top h-12 p-0.5 text-xs relative cursor-pointer ${
-                          !currentMonth ? "text-gray" : ""
+                      className={`border-2 border-gray align-top h-12 p-0.5 text-xs font-poppins relative cursor-pointer ${
+                        !currentMonth ? "text-gray" : ""
                       }`}
                       onClick={() => currentMonth && setSelectedDate(date)}
                     >
+                      {currentMonth && (
+                        <div className={`absolute top-1 left-0 w-full h-2 ${getStatusColor(date)}`}></div>
+                      )}
                       <div className="flex flex-col items-center justify-center h-full">
                         <div
-                          className={`inline-block rounded-full w-4 h-4 flex items-center justify-center ${
+                          className={`inline-block px-1 rounded-full w-4 h-4 flex items-center justify-center ${
                             currentMonth && date === selectedDate ? "bg-[#FFDAA1]" : ""
                           }`}
                         >
@@ -158,6 +275,16 @@ const Overview = () => {
               ))}
           </tbody>
         </table>
+        <div className="flex flex-col items-center justify-center mt-6 gap-4 px-2">
+          <div className={`text-lg sm:text-xl font-bold text-center border-4 border-black w-full max-w-xs sm:max-w-sm md:max-w-md h-20 sm:h-24 rounded-lg flex items-center justify-center px-2 transition-colors duration-300 ${getBoxColor()}`}>
+            {displayedText}
+          </div>
+          <img
+            src={statusIcon}
+            alt="Status Icon"
+            className="w-24 sm:w-28"
+          />
+        </div>
       </div>
     </>
   );

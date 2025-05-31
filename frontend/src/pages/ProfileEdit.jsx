@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -41,7 +40,6 @@ function ProfileEdit() {
   });
 
   const handleProfilePicSelect = async (pic) => {
-    console.log('User picked preset:', pic.name);
     setProfilePicture(pic.src);
 
     try {
@@ -52,7 +50,6 @@ function ProfileEdit() {
       }, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('Profile picture updated to preset');
     } catch (err) {
       console.error('Failed to update preset picture:', err);
     }
@@ -87,8 +84,6 @@ function ProfileEdit() {
       {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(import.meta.env.VITE_CLOUDINARY_CLOUD_NAME, import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
-      console.log('Cloudinary image uploaded and saved');
     } catch (error) {
       console.error('Cloudinary upload failed:', error);
     }
@@ -150,34 +145,32 @@ function ProfileEdit() {
 
 
   return (
-    <div className="w-full h-screen flex flex-col">
-      <div className='flex flex-row'>
-        <div className="p-3 hover:ml-2 ">
-          <img src={Back} alt="Back" className="cursor-pointer" onClick={() => navigate('/profile')} />
-        </div>
-        <div className='ml-3 mt-3 text-2xl font-poppins font-bold'>Edit</div>
+    <div className="w-full min-h-screen flex flex-col px-4 py-6">
+      <div className="flex items-center mb-4">
+        <img src={Back} alt="Back" className="cursor-pointer w-6 h-6 mr-3" onClick={() => navigate('/profile')} />
+        <div className="text-xl md:text-2xl font-poppins font-bold">Edit</div>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center">
-        <div className="mt-3 border-3 rounded-lg w-[450px] h-[200px] md:w-[700px] md:h-[250px] lg:w-[800px] lg:h-[300px] flex flex-col justify-center items-center space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-col items-center">
+        <div className="mt-3 border-2 rounded-lg w-full max-w-xl md:max-w-2xl lg:max-w-3xl h-auto py-6 flex flex-col items-center space-y-4">
           <img
             src={profilePicture}
             alt="Profile"
-            className="w-[100px] h-[100px] md:w-[120px] md:h-[120px] lg:w-[150px] lg:h-[150px] rounded-full object-cover cursor-pointer hover:opacity-80"
+            className="w-24 h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 rounded-full object-cover cursor-pointer hover:opacity-80"
             onClick={() => setShowProfilePicModal(true)}
           />
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
               type="button"
               onClick={() => setShowProfilePicModal(true)}
-              className="p-2 px-3 font-poppins font-bold rounded-lg border-2 text-sm border-black text-white bg-[#988268] hover:scale-105 hover:bg-[#75624B]"
+              className="py-2 px-4 font-poppins font-bold rounded-lg border-2 text-sm border-black text-white bg-[#988268] hover:scale-105 hover:bg-[#75624B]"
             >
               Choose from presets
             </button>
             <button
               type="button"
               onClick={handleUploadClick}
-              className="p-2 px-3 font-poppins font-bold rounded-lg border-2 text-sm border-black text-white bg-poohShirt hover:scale-105 hover:bg-[#ED4E4E]"
+              className="py-2 px-4 font-poppins font-bold rounded-lg border-2 text-sm border-black text-white bg-poohShirt hover:scale-105 hover:bg-[#ED4E4E]"
             >
               Upload from device
             </button>
@@ -191,23 +184,22 @@ function ProfileEdit() {
           />
         </div>
 
-        <div className='mt-8 w-[450px] md:w-[700px] lg:w-[800px]'>
-          <label className="text-xl font-poppins font-light mb-2 block">Name</label>
+        <div className="mt-8 w-full max-w-xl md:max-w-2xl lg:max-w-3xl">
+          <label className="text-base md:text-lg font-poppins font-light mb-2 block">Name</label>
           <input
             type="text"
             name="username"
             value={formData.username}
             onChange={handleChange}
-            className="text-xl font-poppins font-light border-3 rounded-lg w-[450px] md:w-[700px] lg:w-[800px] p-4"
+            className="text-base md:text-lg font-poppins font-light border-2 rounded-lg w-full p-3"
             placeholder="e.g. Inwza"
           />
         </div>
 
-
         <div className="p-3 font-poppins text-lg font-bold">
           <button
             type="submit"
-            className='mt-10 p-2 text-base px-9 rounded-lg border-3 border-black bg-honeyGold hover:scale-105 hover:bg-[#F0DC64]'
+            className="mt-10 py-2 px-6 text-sm md:text-base rounded-lg border-2 border-black bg-honeyGold hover:scale-105 hover:bg-[#F0DC64]"
           >
             SAVE
           </button>
