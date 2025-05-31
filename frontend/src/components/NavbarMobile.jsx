@@ -4,9 +4,13 @@ import homeIcon from "../assets/HomeIcon.svg";
 import profileIcon from "../assets/ProfileIcon.svg";
 import CalendarIcon from "../assets/CalendarIcon.svg";
 import HistoryIcon from "../assets/HistoryIcon.svg";
+import AddIcon from "../assets/AddIcon.svg";
 
 
 function NavbarMobile() {
+    // const handleAddEditClick =()=>{
+    //     setSelctedAdd();
+    // }
   return (
     <div className="flex flex-col items-center w-full">
       {/* Bottom Navigation Bar */}
@@ -18,7 +22,7 @@ function NavbarMobile() {
             end
             className={({ isActive }) =>
               `p-2 rounded-full transition-all ${
-                isActive ? "bg-barbie" : "bg-white"
+                isActive ? "bg-honeyGold" : "bg-white"
               }`
             }
           >
@@ -34,7 +38,7 @@ function NavbarMobile() {
             to="/history"
             className={({ isActive }) =>
               `p-2 rounded-full transition-all ${
-                isActive ? "bg-barbie" : "bg-white"
+                isActive ? "bg-honeyGold" : "bg-white"
               }`
             }
           >
@@ -45,12 +49,36 @@ function NavbarMobile() {
             />
           </NavLink>
 
+          {/* Add Button */}
+          <NavLink
+            to="/addEdit"
+            className={({ isActive }) =>
+              `p-2 rounded-full transition-all ${
+                isActive ? "bg-honeyGold" : "bg-white"
+              }`
+            }
+          >
+            <img
+              src={AddIcon}
+              alt="AddEdit"
+              className="w-18 h-18  sm:w-18 sm:h-18 md:w-20 md:h-20 -mt-13"
+            />
+          </NavLink>
+            {/* Add/Plus Button
+          <NavLink
+            to="/addEdit"
+            onClick={() => handleClick("Add")}
+            className="p-4 bg-white rounded-xl border-2 shadow-md"
+          >
+            <Icon icon={AddIcon} className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12" />
+          </NavLink> */}
+
            {/* Overview Button */}
           <NavLink
             to="/overview"
             className={({ isActive }) =>
               `p-2 rounded-full transition-all ${
-                isActive ? "bg-barbie" : "bg-white"
+                isActive ? "bg-honeyGold" : "bg-white"
               }`
             }
           >
@@ -66,7 +94,7 @@ function NavbarMobile() {
             to="/profile"
             className={({ isActive }) =>
               `p-2 rounded-full transition-all ${
-                isActive ? "bg-barbie" : "bg-white"
+                isActive ? "bg-honeyGold" : "bg-white"
               }`
             }
           >

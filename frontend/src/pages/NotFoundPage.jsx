@@ -6,10 +6,10 @@ function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#F55EBB] px-4 md:px-8">
+    <div className="flex items-center justify-center min-h-screen bg-[#988268] px-4 md:px-8">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[1200px] h-auto md:h-[80vh] flex flex-col md:flex-row items-center md:items-center justify-between px-6 md:px-20 py-12">
         
-        {/* รูปแบด */}
+        {/* Logo */}
         <div className="w-full md:w-1/2 flex justify-center items-center md:items-center md:justify-center mb-10 md:mb-0">
           <img
             src={LogoS}
@@ -31,7 +31,7 @@ function NotFoundPage() {
           </p>
           <button
             onClick={() => navigate("/home")}
-            className="px-8 sm:px-10 py-3 bg-[#E7FAD9] border-2 border-black rounded-md hover:bg-[#d6f2c8] 
+            className="px-8 sm:px-10 py-3 bg-[#FFF19C] border-2 border-black rounded-md hover:bg-[#FDEA76] 
                       transition-all font-poppins font-bold text-lg"
           >
             HOME

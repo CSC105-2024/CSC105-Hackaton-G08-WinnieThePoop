@@ -6,4 +6,9 @@
 
 @theme{
   --font-poppins: "Poppins", sans-serif;
+  --color-honeyPot: #988268;
+  --color-honeyGold: #FFF19C;
+  --color-poohShirt: #FF6D6D;
+    --color-darkgray: #3C4045;
+  --color-gray: #A7A7A7
 }

@@ -29,50 +29,47 @@ const Navbar = () => {
       { name: 'Women', src: Women },
     ];
 
-// const fetchuser = async () => {
-//   try {
-//     const token = localStorage.getItem('token');
-//     const response = await axios.get(`http://localhost:3000/users/profile`, {
-//       headers: {
-//         'Authorization': `Bearer ${token}`
-//       }
-//     });
+const fetchuser = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`http://localhost:3000/users/profile`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
 
-//     console.log("Profile response:", response.data);
+    console.log("Profile response:", response.data);
 
-//     const picture = response.data.User_picture;
+    const picture = response.data.User_picture;
 
-//     // Check if it's a full URL (e.g., Cloudinary), otherwise fallback to internal SVG list
-//     if (picture?.startsWith('http')) {
-//       setProfilePicture(picture);
-//     } else {
-//       const pictureName = picture?.toLowerCase().replace(/\s+/g, '').replace('.svg', '');
-//       const foundPicture = pictures.find(p =>
-//         p.name.toLowerCase().replace(/\s+/g, '') === pictureName
-//       );
-//       setProfilePicture(foundPicture?.src || Men1);
-//     }
+    // Check if it's a full URL (e.g., Cloudinary), otherwise fallback to internal SVG list
+    if (picture?.startsWith('http')) {
+      setProfilePicture(picture);
+    } else {
+      const pictureName = picture?.toLowerCase().replace(/\s+/g, '').replace('.svg', '');
+      const foundPicture = pictures.find(p =>
+        p.name.toLowerCase().replace(/\s+/g, '') === pictureName
+      );
+      setProfilePicture(foundPicture?.src || Men1);
+    }
 
-//   } catch (err) {
-//     console.error("Error fetching user data:", err);
-//     setError("Failed to fetch user data");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+  } catch (err) {
+    console.error("Error fetching user data:", err);
+    setError("Failed to fetch user data");
+  } finally {
+    setLoading(false);
+  }
+};
 
-// useEffect(() => {
-//   fetchuser();
-// }, []);
+useEffect(() => {
+  fetchuser();
+}, []);
 
   return (
     <div className="flex flex-col items-center w-full">
-      <nav className="fixed top-0 w-full px-6 py-3 bg-white shadow-[0px_4px_8px_0px_rgba(0,0,0,0.25)] z-10 border-2">
+      <nav className="fixed top-0 w-full px-6 py-3 bg-[#FFF19C] shadow-[0px_4px_8px_0px_rgba(0,0,0,0.25)] z-10 border-2">
         <div className="flex justify-between items-center max-w-7xl mx-auto p-2">
-          {/* Logo on the left */}
-          <div className="text-xl">
-            <img src={LogoS} className="w-4 h-4"></img>
-          </div>
+
 
           {/* Right side: NavLinks + Profile */}
           <div className="flex items-center space-x-20 ml-auto text-xl font-poppins font-bold">
