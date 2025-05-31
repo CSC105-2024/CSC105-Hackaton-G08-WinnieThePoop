@@ -171,6 +171,7 @@ export const fetchRecordCount = async (userid: number) => {
 export const fetchRecordCountByDate = async (userid: number, dateParam: string) => {
   try {
     const baseDate = new Date(`${dateParam}T00:00:00+07:00`);
+
     const startOfDay = new Date(baseDate);
     const endOfDay = new Date(baseDate);
     endOfDay.setDate(endOfDay.getDate() + 1);
@@ -187,6 +188,32 @@ export const fetchRecordCountByDate = async (userid: number, dateParam: string) 
     return count;
   } catch (error) {
     console.error('Error fetching Record count by date:', error);
+    throw error; 
+  }
+};
+
+export const fetchDailyStatus = async (userId: number, dateParam: string) => {
+  try {
+    const baseDate = new Date(`${dateParam}T00:00:00+07:00`);
+    const startOfDay = new Date(baseDate);
+    const endOfDay = new Date(baseDate);
+    endOfDay.setDate(endOfDay.getDate() + 1);
+
+    const hasRed = await prisma.record.findFirst({
+      where: {
+        UserId: userId,
+        RecordDate: {
+          gte: startOfDay,
+          lt: endOfDay,
+        },
+        RecordStatus: 'Abnormal',
+      },
+    });
+
+    return hasRed ? 'Abnormal' : 'Normal';
+  } catch (error) {
+    console.error('Error checking daily status:', error);
     throw error;
   }
 };
+

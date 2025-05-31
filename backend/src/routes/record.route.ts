@@ -7,6 +7,7 @@ recordRouter.use('*', authMiddleware);
 
 recordRouter.get('/', Recordcontroller.fetchRecordsController);
 recordRouter.get('/count/:date', Recordcontroller.fetchRecordCountByDateController);
+recordRouter.get('/status/:date', Recordcontroller.fetchDailyStatusController);
 recordRouter.post('/', Recordcontroller.createRecordController);
 recordRouter.put('/:id', Recordcontroller.updateRecordController);
 recordRouter.delete('/:id', Recordcontroller.deleteRecordController);

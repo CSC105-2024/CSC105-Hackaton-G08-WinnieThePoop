@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import Good from '../assets/Poop/good.svg';
-import tongue from '../assets/Poop/Tongueout.svg';
+//import tongue from '../assets/Poop/Tongueout.svg';
 import Please from '../assets/Poop/Please.svg';
 import Gray from '../assets/status/Gray.png';
+import Yellow from '../assets/status/Yellow.png';
+import Red from '../assets/status/Red.png';
+import Green from '../assets/status/Green.png';
 import logo from '../assets/LogoBorderS.svg';
 import AddIcon from '../assets/AddIcon.svg';
 import { useWindowSize } from '../components/hooks/useWindowSize';
@@ -19,31 +22,17 @@ import fart9 from '../assets/sounds/fart9.mp3';
 function Home() {
   const { width } = useWindowSize();
   const isMobile = width <= 768;
-
-  const fullText = "Have you poop yet, Please tell us😔";
+  const token = localStorage.getItem('token');
+  const [fullText, setFullText] = useState("Have you poop yet, Please tell us 😔");
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
+  const [recordCount, setRecordCount] = useState(0);
+  const [status, setStatus] = useState('Normal');
   const clickSounds = [
   fart1, fart2, fart3, fart4, fart5,
-  fart6, fart7, fart8, fart9,
-];
-
+  fart6, fart7, fart8, fart9,];
+    
   const [bursts, setBursts] = useState([]);
-
-  // Typewriter effect    
-  useEffect(() => {
-    let i = -1;
-    const interval = setInterval(() => {
-      if (i <= fullText.length - 2) {
-        setDisplayedText((prev) => prev + fullText[i]);
-        i++;
-      } else {
-        setIsTyping(false);
-        clearInterval(interval);
-      }
-    }, 60);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleLogoClick = (e) => {
   const id = Date.now();
@@ -64,6 +53,102 @@ function Home() {
   }, 800);
 };
 
+  const fetchRecordCountbyDate = async () => {
+  try {
+    const formatDateToYYYYMMDD = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  const today = formatDateToYYYYMMDD(new Date());
+
+    const response = await fetch(`http://localhost:3000/record/count/${today}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch record count');
+    }
+
+    const data = await response.json();
+    console.log('Record count:', data.count);
+    setRecordCount(String(data.count).padStart(2, '0'));
+    
+  } catch (error) {
+    console.error('Error fetching record count:', error);
+  }
+};
+  const fetchRecordStatus = async () => {
+  try {
+    const formatDateToYYYYMMDD = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    const today = formatDateToYYYYMMDD(new Date());
+
+    const response = await fetch(`http://localhost:3000/record/status/${today}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch record status');
+    }
+
+    const data = await response.json();
+    console.log('Record status:', data);
+    setStatus(data.status); 
+
+    if (data.status === 'Abnormal') {
+      setFullText('You should go see a doctor!💀🧻🚽');
+    } else if (data.status === 'Worrisome') {
+      setFullText('Hmmm, Interesting... 🤔');
+    } else if (data.status === 'Normal') {
+      setFullText('Everything is okay, Keep do it!');
+    } else {
+      setFullText('Have you poop yet, Please tell us 😔');
+    }
+    console.log('Full text:', status);
+  } catch (error) {
+    console.error('Error fetching record status:', error);
+    setFullText('Please try again later.');
+  }
+};
+
+useEffect(() => {
+    fetchRecordStatus();
+  }
+, []);
+
+  useEffect(() => {
+    fetchRecordCountbyDate();
+  }
+, []);
+
+  // Typewriter effect    
+  useEffect(() => {
+    let i = -1;
+    const interval = setInterval(() => {
+      if (i <= fullText.length - 2) {
+        setDisplayedText((prev) => prev + fullText[i]);
+        i++;
+      } else {
+        setIsTyping(false);
+        clearInterval(interval);
+      }
+    }, 60);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen w-full py-10 relative overflow-hidden">
@@ -77,9 +162,23 @@ function Home() {
       <div className="flex justify-center items-center mt-10">
         <div
           className="w-[520px] h-[300px] sm:w-[580px] sm:h-[320px] md:w-[600px] md:h-[350px] lg:w-[784px] lg:h-[431px] border-4 rounded-lg bg-white bg-cover bg-center relative"
-          style={{ backgroundImage: `url(${Gray})` }}
+          style={{
+            backgroundImage: `url(${
+              status === 'Abnormal'
+                ? Red
+                : status === 'Worrisome'
+                ? Yellow
+                : status === 'Normal'
+                ? Green
+                : Gray
+            })`,
+          }}
+
+
         >
-          <h1 className="font-poppins text-5xl sm:text-5xl md:text-6xl lg:text-8xl flex justify-center items-center mt-10">00</h1>
+          <h1 className="font-poppins text-5xl sm:text-5xl md:text-6xl lg:text-8xl flex justify-center items-center mt-10">
+            {String(recordCount).padStart(2, '0')}
+          </h1>
 
           <div className="flex justify-center items-center">
             <img

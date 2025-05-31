@@ -77,6 +77,19 @@ export const fetchRecordCountByDateController = async (c: Context) => {
   }
 };
 
+export const fetchDailyStatusController = async (c: Context) => {
+  try {
+    const dateParam = c.req.param('date'); 
+    const user = c.get('user') as { id: number };
+
+    const status = await RecordModel.fetchDailyStatus(user.id, dateParam);
+     return c.json({ message: 'Record status fetched successfully', status });
+  } catch (error) {
+    return c.json({ error: 'Failed to fetch record status' }, 500);
+  }
+};
+
+
 
 
 

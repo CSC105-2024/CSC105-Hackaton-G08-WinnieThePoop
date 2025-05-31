@@ -9,7 +9,14 @@ import recordRouter from './routes/record.route.ts'
 const app = new Hono()
 export const db = new PrismaClient()
 
-app.use('*', cors());
+app.use('*', cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  allowHeaders: ['Content-Type', 'Authorization'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  exposeHeaders: ['Set-Cookie'],
+  maxAge: 600,
+}));
 app.use('*', async (c, next) => {
   console.log(`[${c.req.method}] ${c.req.url}`);
   await next();
