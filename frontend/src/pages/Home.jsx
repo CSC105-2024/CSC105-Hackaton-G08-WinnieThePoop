@@ -6,6 +6,15 @@ import Gray from '../assets/status/Gray.png';
 import logo from '../assets/LogoBorderS.svg';
 import AddIcon from '../assets/AddIcon.svg';
 import { useWindowSize } from '../components/hooks/useWindowSize';
+import fart1 from '../assets/sounds/fart1.mp3';
+import fart2 from '../assets/sounds/fart2.mp3';
+import fart3 from '../assets/sounds/fart3.mp3';
+import fart4 from '../assets/sounds/fart4.mp3';
+import fart5 from '../assets/sounds/fart5.mp3';
+import fart6 from '../assets/sounds/fart6.mp3';
+import fart7 from '../assets/sounds/fart7.mp3';
+import fart8 from '../assets/sounds/fart8.mp3';
+import fart9 from '../assets/sounds/fart9.mp3';
 
 function Home() {
   const { width } = useWindowSize();
@@ -14,6 +23,10 @@ function Home() {
   const fullText = "Have you poop yet, Please tell us😔";
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
+  const clickSounds = [
+  fart1, fart2, fart3, fart4, fart5,
+  fart6, fart7, fart8, fart9,
+];
 
   const [bursts, setBursts] = useState([]);
 
@@ -33,19 +46,24 @@ function Home() {
   }, []);
 
   const handleLogoClick = (e) => {
-    const id = Date.now();
+  const id = Date.now();
 
-    // Get position of click relative to screen
-    const rect = e.target.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
+  // Play a random sound
+  const randomSound = clickSounds[Math.floor(Math.random() * clickSounds.length)];
+  const audio = new Audio(randomSound);
+  audio.play();
 
-    setBursts((prev) => [...prev, { id, x, y }]);
+  // Position burst
+  const rect = e.target.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
 
-    setTimeout(() => {
-      setBursts((prev) => prev.filter((b) => b.id !== id));
-    }, 800);
-  };
+  setBursts((prev) => [...prev, { id, x, y }]);
+  setTimeout(() => {
+    setBursts((prev) => prev.filter((b) => b.id !== id));
+  }, 800);
+};
+
 
   return (
     <div className="min-h-screen w-full py-10 relative overflow-hidden">
