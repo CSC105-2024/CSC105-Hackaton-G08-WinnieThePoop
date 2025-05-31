@@ -33,7 +33,7 @@ function ConfirmLogout({ onClose }) {
     >
       <div 
         className={`bg-white border-3 p-7 rounded-lg shadow-lg font-poppins text-center w-65 h-50 sm:w-90 sm:h-45 relative ${isClosing ? 'animate-scale-out' : 'animate-scale-in'}`}
-        onClick={(e) => e.stopPropagation()} // Prevent clicks inside modal from bubbling to backdrop
+        onClick={(e) => e.stopPropagation()} 
       >
         <img
           src={Cry}
