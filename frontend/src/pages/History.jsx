@@ -233,7 +233,7 @@ const History = () => {
               key={index}
               data-date={dateStr}
               ref={(el) => isSelected && setSelectedDateElement(el)}
-              className={`cursor-pointer flex flex-col items-center p-1 w-6 sm:w-8 md:w-10 lg:w-12 ${isSelected ? 'text-black' : ''} hover:bg-gray-100 rounded transition-colors active:scale-95`}
+              className={`cursor-pointer flex flex-col items-center p-1 w-6 sm:w-8 md:w-10 lg:w-12 ${isSelected ? 'text-black' : ''} rounded transition-colors active:scale-95`}
               onClick={(e) => {
                 e.preventDefault();
                 handleDateClick(day, e.currentTarget)
