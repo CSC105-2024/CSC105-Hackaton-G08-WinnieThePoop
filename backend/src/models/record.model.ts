@@ -21,8 +21,8 @@ export const createRecord = async (RecordData: {
   const defaultName = `Record ${String(recordCount + 1).padStart(2, '0')}`;
 
   const abnormalColors = ['Red', 'Black', 'Gray'];
-  const abnormalTextures = ['Mushy', 'Liquid'];
-
+  const abnormalTextures = ['Mushy', 'Liquid', 'HardLump'];
+  const worrisomeTextures = ['SoftBlob'];
   let status = RecordData.RecordStatus ?? 'Normal';
 
   if (
@@ -30,6 +30,14 @@ export const createRecord = async (RecordData: {
     abnormalTextures.includes(RecordData.RecordTexture)
   ) {
     status = 'Abnormal';
+  }
+  else if(
+    worrisomeTextures.includes(RecordData.RecordTexture)
+  ){
+    status = 'Worrisome';
+  }
+  else{
+    status = 'Normal';
   }
 
   const DataToInsert = {
@@ -60,7 +68,7 @@ export const updateRecord = async (c: Context) => {
 
   const abnormalColors = ['Red', 'Black', 'Gray'];
   const abnormalTextures = ['Mushy', 'Liquid'];
-
+  const worrisomeTextures = ['SoftBlob'];
   let status = body.RecordStatus ?? undefined;
 
   if (
@@ -68,7 +76,12 @@ export const updateRecord = async (c: Context) => {
     (body.RecordTexture && abnormalTextures.includes(body.RecordTexture))
   ) {
     status = 'Abnormal';
-  } else {
+  } else if(
+    body.RecordTexture && worrisomeTextures.includes(body.RecordTexture)
+  ){
+    status = 'Worrisome';
+  }
+  else{
     status = 'Normal';
   }
 
@@ -100,7 +113,6 @@ export const updateRecord = async (c: Context) => {
     throw err;  
   }
 };
-
 
 export const deleteRecord = async (c: Context) => {
   const id = Number(c.req.param('id'));
