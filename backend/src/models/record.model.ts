@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { PrismaClient, type RecordColor, type RecordStatus } from '../generated/prisma/index.js';
+import { PrismaClient, RecordTexture, type RecordColor, type RecordStatus } from '../generated/prisma/index.js';
 
 const prisma = new PrismaClient();
 
@@ -8,21 +8,37 @@ export const createRecord = async (RecordData: {
   RecordName?: string;
   RecordDescription?: string;
   RecordColor: RecordColor;
+  RecordTexture: RecordTexture;
   RecordDate: Date;
-  RecordStatus: RecordStatus;
+  RecordStatus?: RecordStatus;
 }) => {
   const recordCount = await prisma.record.count({
     where: {
-      UserId: RecordData.UserId
-    }
+      UserId: RecordData.UserId,
+    },
   });
+
   const defaultName = `Record ${String(recordCount + 1).padStart(2, '0')}`;
+
+  const abnormalColors = ['Red', 'Black', 'Gray'];
+  const abnormalTextures = ['Mushy', 'Liquid'];
+
+  let status = RecordData.RecordStatus ?? 'Normal';
+
+  if (
+    abnormalColors.includes(RecordData.RecordColor) ||
+    abnormalTextures.includes(RecordData.RecordTexture)
+  ) {
+    status = 'Abnormal';
+  }
+
   const DataToInsert = {
     RecordName: RecordData.RecordName ?? defaultName,
     RecordDescription: RecordData.RecordDescription ?? '',
     RecordColor: RecordData.RecordColor ?? 'Brown',
+    RecordTexture: RecordData.RecordTexture ?? 'Sausage',
     RecordDate: RecordData.RecordDate ?? new Date(),
-    RecordStatus: RecordData.RecordStatus,
+    RecordStatus: status,
     User: {
       connect: {
         UserId: RecordData.UserId,
@@ -42,26 +58,49 @@ export const updateRecord = async (c: Context) => {
   const user = c.get('user') as { id: number };
   const body = await c.req.json();
 
+  const abnormalColors = ['Red', 'Black', 'Gray'];
+  const abnormalTextures = ['Mushy', 'Liquid'];
+
+  let status = body.RecordStatus ?? undefined;
+
+  if (
+    (body.RecordColor && abnormalColors.includes(body.RecordColor)) ||
+    (body.RecordTexture && abnormalTextures.includes(body.RecordTexture))
+  ) {
+    status = 'Abnormal';
+  } else {
+    status = 'Normal';
+  }
+
   try {
-    await prisma.record.updateMany({
+
+    const updatedRecord = await prisma.record.update({
       where: {
         RecordId: id,
-        UserId: user.id
       },
       data: {
         RecordName: body.RecordName ?? 'My Record',
         RecordDescription: body.RecordDescription ?? '',
         RecordColor: body.RecordColor ?? 'Brown',
+        RecordTexture: body.RecordTexture ?? 'Sausage',
         RecordDate: body.RecordDate ?? new Date(),
-      }
+        RecordStatus: status,
+        UserId: user.id, 
+      },
     });
 
-    return c.json({ message: 'Record updated successfully' });
+
+    if (updatedRecord.UserId !== user.id) {
+      return c.json({ error: 'Unauthorized' }, 403);
+    }
+
+    return updatedRecord;  
   } catch (err) {
     console.error('Error updating Record:', err);
-    return c.json({ error: 'Failed to update Record' }, 500);
+    throw err;  
   }
 };
+
 
 export const deleteRecord = async (c: Context) => {
   const id = Number(c.req.param('id'));
@@ -101,10 +140,8 @@ export const fetchRecords = async (userid: number) => {
   }
 };
 
-
-export const fetchRecordCount = async (c: Context) => {
-    const user = c.get('user') as { id: number };
-    
+export const fetchRecordCount = async (userid: number) => {
+    const user = { id: userid }; 
     try {
         const count = await prisma.record.count({
         where: {
@@ -112,39 +149,32 @@ export const fetchRecordCount = async (c: Context) => {
         }
         });
     
-        return c.json({ count });
+        return count
     } catch (error) {
         console.error('Error fetching Record count:', error);
-        return c.json({ error: 'Failed to fetch Record count' }, 500);
+        throw new Error('Failed to fetch Record count');
     }
 }
 
-export const fetchRecordByDate = async (c: Context) => {
-  const user = c.get('user') as { id: number };
-  const dateParam = c.req.param('date'); // Expected format: "YYYY-MM-DD"
-
+export const fetchRecordCountByDate = async (userid: number, dateParam: string) => {
   try {
     const baseDate = new Date(`${dateParam}T00:00:00+07:00`);
     const startOfDay = new Date(baseDate);
     const endOfDay = new Date(baseDate);
     endOfDay.setDate(endOfDay.getDate() + 1);
 
-    const records = await prisma.record.findMany({
+    const count = await prisma.record.count({
       where: {
-        UserId: user.id,
+        UserId: userid,
         RecordDate: {
           gte: startOfDay,
           lt: endOfDay,
         },
       },
-      orderBy: {
-        RecordDate: 'desc',
-      },
     });
-
-    return c.json(records);
+    return count;
   } catch (error) {
-    console.error('Error fetching Records by date:', error);
-    return c.json({ error: 'Failed to fetch Records by date' }, 500);
+    console.error('Error fetching Record count by date:', error);
+    throw error;
   }
 };

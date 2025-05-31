@@ -2,6 +2,8 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { PrismaClient } from "./generated/prisma/index.js"
 import { cors } from 'hono/cors'
+import userRouter from './routes/user.route.ts'
+import recordRouter from './routes/record.route.ts'
 
 
 const app = new Hono()
@@ -12,6 +14,9 @@ app.use('*', async (c, next) => {
   console.log(`[${c.req.method}] ${c.req.url}`);
   await next();
 });
+
+app.route('/users', userRouter);
+app.route('/record', recordRouter);
 
 db.$connect()
 	.then(() => {

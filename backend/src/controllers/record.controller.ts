@@ -14,6 +14,7 @@ export const createRecordController = async (c: Context) => {
             RecordName: body.RecordName,
             RecordDescription: body.RecordDescription,
             RecordColor: body.RecordColor,
+            RecordTexture: body.RecordTexture,
             RecordDate: body.RecordDate,
             RecordStatus: body.RecordStatus,
         });
@@ -29,7 +30,7 @@ export const updateRecordController = async (c: Context) => {
     try {
         const updatedRecord = await RecordModel.updateRecord(c);
     
-        return c.json({ message: 'Record updated successfully', updatedRecord });
+        return c.json({ message: 'Record updated successfully', updatedRecord});
     } catch (err) {
         console.error('Error updating record:', err);
         return c.json({ error: 'Failed to update record' }, 500);
@@ -56,6 +57,23 @@ export const fetchRecordsController = async (c: Context) => {
   } catch (err) {
     console.error('Error fetching records:', err);
     return c.json({ error: 'Failed to fetch records' }, 500);
+  }
+};
+
+export const fetchRecordCountByDateController = async (c: Context) => {
+  const user = c.get('user') as { id: number };
+  const dateParam = c.req.param('date'); 
+
+  if (!dateParam) {
+    return c.json({ error: 'Date parameter is required' }, 400);
+  }
+
+  try {
+    const count = await RecordModel.fetchRecordCountByDate(user.id, dateParam);
+    return c.json({ message: 'Record count fetched successfully', count });
+  } catch (err) {
+    console.error('Error fetching record count:', err);
+    return c.json({ error: 'Failed to fetch record count' }, 500);
   }
 };
 

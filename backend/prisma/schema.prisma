@@ -9,6 +9,14 @@ datasource db {
   url      = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
+enum RecordTexture {
+  HardLump
+  Sausage
+  SoftBlob
+  Mushy
+  Liquid
+}
+
 enum RecordStatus {
   Normal
   Worrisome
@@ -28,7 +36,7 @@ model User {
   UserEmail     String   @unique
   Username      String 
   UserProfilePic String @default("Men1")
-  
+
   Record Record[]
 }
 
@@ -39,6 +47,7 @@ model Record {
   RecordDescription String?
   RecordDate DateTime @default(now())
   RecordColor RecordColor @default(Brown)
+  RecordTexture RecordTexture @default(Sausage)
   RecordStatus RecordStatus @default(Normal)
   User User @relation(fields: [UserId], references: [UserId])
 }
