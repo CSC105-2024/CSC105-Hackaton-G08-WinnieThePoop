@@ -26,7 +26,6 @@ const pictures = [
 
 function ProfilePic({ onClose, onSelect }) {
   const [isClosing, setIsClosing] = useState(false);
-//   const fileInputRef = useRef(null);
 
   const closeModal = () => {
     setIsClosing(true);
@@ -40,22 +39,6 @@ function ProfilePic({ onClose, onSelect }) {
     onSelect(pic); 
     closeModal();   
   };
-
-//   const handleUploadClick = () => {
-//     fileInputRef.current.click(); 
-//   };
-
-//   const handleFileChange = (e) => {
-//     const file = e.target.files[0];
-//     if (file) {
-//       const reader = new FileReader();
-//       reader.onloadend = () => {
-//         onSelect({ name: 'CustomUpload', src: reader.result });
-//         closeModal();
-//       };
-//       reader.readAsDataURL(file);
-//     }
-//   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">

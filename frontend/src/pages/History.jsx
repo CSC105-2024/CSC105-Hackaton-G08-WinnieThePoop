@@ -11,33 +11,6 @@ import prev1 from '../assets/prev1.svg';
 import next from '../assets/next.svg';
 import { addWeeks, subWeeks, format, startOfWeek, eachDayOfInterval, isSameWeek } from 'date-fns';
 
-const mockPoopings = [
-  {
-    id: 4,
-    name: "04",
-    time: "12:00",
-    date: "2025-06-01"
-  },
-  {
-    id: 3,
-    name: "03",
-    time: "10:30",
-    date: "2025-06-01"
-  },
-  {
-    id: 2,
-    name: "02",
-    time: "08:30",
-    date: "2025-05-31"
-  },
-  {
-    id: 1,
-    name: "01",
-    time: "02:00",
-    date: "2025-05-30"
-  },
-];
-
 const History = () => {
   const [poopings, setPoopings] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -65,12 +38,11 @@ const History = () => {
     setPoopings(mockPoopings);
   }, []);
 
-  // Filter poopings based on selected date
+ 
   const filteredPoopings = poopings.filter(pooping => pooping.date === selectedDate);
 
-  // Calendar functions
+  
   const handleDateClick = (date, element) => {
-    // console.log(date, element);
     setSelectedDate(format(date, 'yyyy-MM-dd'));
     setSelectedDateElement(element);
     updateBoxPosition(element);
@@ -200,7 +172,7 @@ const History = () => {
     {currentMonth.toUpperCase()}
   </div>
   <div className="flex items-center w-full justify-center">
-    {/* Previous Week Button - Enhanced for mobile */}
+    {/* Previous Week Button*/}
     <button 
       onClick={handlePrevWeek} 
       className="p-2 sm:p-3 cursor-pointer hover:scale-105 hover:translate-x-[-5px] transition-all duration-200 flex-shrink-0 active:scale-95"
