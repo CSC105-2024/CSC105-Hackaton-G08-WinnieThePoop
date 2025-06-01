@@ -146,11 +146,6 @@ const History = () => {
     setShowEditModal(true);
   };
 
-  const handleCloseEditModal = () => {
-    setShowEditModal(false);
-    setSelectedPooping(null);
-  };
-
   const handleOpenDeleteModal = (id) => {
     setDeleteId(id);
     setShowDeleteModal(true);

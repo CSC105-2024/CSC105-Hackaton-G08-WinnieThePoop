@@ -156,7 +156,6 @@ const Overview = () => {
     const dateString = currentDate.date(date).format("YYYY-MM-DD");
     const todayString = currentDate.format("YYYY-MM-DD");
 
-    // If future, don't return any color
     if (dateString > todayString) return "bg-gray-200";
 
     const status = dateStatuses[dateString];

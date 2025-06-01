@@ -64,15 +64,7 @@ function NavbarMobile() {
               className="w-18 h-18  sm:w-18 sm:h-18 md:w-20 md:h-20 -mt-13"
             />
           </NavLink>
-            {/* Add/Plus Button
-          <NavLink
-            to="/addEdit"
-            onClick={() => handleClick("Add")}
-            className="p-4 bg-white rounded-xl border-2 shadow-md"
-          >
-            <Icon icon={AddIcon} className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12" />
-          </NavLink> */}
-
+    
            {/* Overview Button */}
           <NavLink
             to="/overview"

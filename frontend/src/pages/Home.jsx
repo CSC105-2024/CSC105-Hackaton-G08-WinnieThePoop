@@ -47,12 +47,11 @@ function Home() {
     'Normal': Good
   };
 
-  // Function to get the correct image
   const getStatusImage = () => {
     if (recordCount === 0 || recordCount === '00') {
-      return Good; // Use Good.svg when count is 0
+      return Good; 
     }
-    return statusImages[status] || Please; // Use status-based image or fallback to Please
+    return statusImages[status] || Please; 
   };
 
   const handleLogoClick = (e) => {
@@ -186,7 +185,7 @@ function Home() {
     }, 60);
     
     return () => clearInterval(interval);
-  }, [fullText]); // Dependency on fullText
+  }, [fullText]); 
 
   const handleOpenAddModal = () => {
     setShowAddModal(true);
