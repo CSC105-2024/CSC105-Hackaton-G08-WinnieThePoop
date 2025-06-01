@@ -20,6 +20,8 @@ import fart8 from '../assets/sounds/fart8.mp3';
 import fart9 from '../assets/sounds/fart9.mp3';
 import { format } from 'date-fns';
 import AddEditModal from '../components/modals/AddEdit.jsx';
+import Docter from '../assets/Poop/Docter.svg';
+import Sus from '../assets/Poop/Sus.svg';
 
 function Home() {
   const { width } = useWindowSize();
@@ -31,32 +33,48 @@ function Home() {
   const [recordCount, setRecordCount] = useState(0);
   const [status, setStatus] = useState('Normal');
   const clickSounds = [
-  fart1, fart2, fart3, fart4, fart5,
-  fart6, fart7, fart8, fart9,];
+    fart1, fart2, fart3, fart4, fart5,
+    fart6, fart7, fart8, fart9,
+  ];
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [showAddModal, setShowAddModal] = useState(false);
   const [bursts, setBursts] = useState([]);
-      const [poopings, setPoopings] = useState([]);
+  const [poopings, setPoopings] = useState([]);
+
+  const statusImages = {
+    'Abnormal': Docter,
+    'Worrisome': Sus,
+    'Normal': Good
+  };
+
+  // Function to get the correct image
+  const getStatusImage = () => {
+    if (recordCount === 0 || recordCount === '00') {
+      return Good; // Use Good.svg when count is 0
+    }
+    return statusImages[status] || Please; // Use status-based image or fallback to Please
+  };
+
   const handleLogoClick = (e) => {
-  const id = Date.now();
+    const id = Date.now();
     
-  // Play a random sound
-  const randomSound = clickSounds[Math.floor(Math.random() * clickSounds.length)];
-  const audio = new Audio(randomSound);
-  audio.play();
+    // Play a random sound
+    const randomSound = clickSounds[Math.floor(Math.random() * clickSounds.length)];
+    const audio = new Audio(randomSound);
+    audio.play();
 
-  // Position burst
-  const rect = e.target.getBoundingClientRect();
-  const x = rect.left + rect.width / 2;
-  const y = rect.top + rect.height / 2;
+    // Position burst
+    const rect = e.target.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
 
-  setBursts((prev) => [...prev, { id, x, y }]);
-  setTimeout(() => {
-    setBursts((prev) => prev.filter((b) => b.id !== id));
-  }, 800);
-};
+    setBursts((prev) => [...prev, { id, x, y }]);
+    setTimeout(() => {
+      setBursts((prev) => prev.filter((b) => b.id !== id));
+    }, 800);
+  };
 
-const handleAddNewPooping = (newPooping) => {
+  const handleAddNewPooping = (newPooping) => {
     const poopingWithDate = {
       ...newPooping,
       date: selectedDate,
@@ -67,92 +85,98 @@ const handleAddNewPooping = (newPooping) => {
   };
 
   const fetchRecordCountbyDate = async () => {
-  try {
-    const formatDateToYYYYMMDD = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    try {
+      const formatDateToYYYYMMDD = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+      const today = formatDateToYYYYMMDD(new Date());
+
+      const response = await fetch(`http://localhost:3000/record/count/${today}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch record count');
+      }
+
+      const data = await response.json();
+      console.log('Record count:', data.count);
+      setRecordCount(String(data.count).padStart(2, '0'));
+      
+    } catch (error) {
+      console.error('Error fetching record count:', error);
+    }
   };
-  const today = formatDateToYYYYMMDD(new Date());
 
-    const response = await fetch(`http://localhost:3000/record/count/${today}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch record count');
-    }
-
-    const data = await response.json();
-    console.log('Record count:', data.count);
-    setRecordCount(String(data.count).padStart(2, '0'));
-    
-  } catch (error) {
-    console.error('Error fetching record count:', error);
-  }
-};
   const fetchRecordStatus = async () => {
-  try {
-    const formatDateToYYYYMMDD = (date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
-    const today = formatDateToYYYYMMDD(new Date());
+    try {
+      const formatDateToYYYYMMDD = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+      const today = formatDateToYYYYMMDD(new Date());
 
-    const response = await fetch(`http://localhost:3000/record/status/${today}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+      const response = await fetch(`http://localhost:3000/record/status/${today}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch record status');
+      if (!response.ok) {
+        throw new Error('Failed to fetch record status');
+      }
+
+      const data = await response.json();
+      console.log('Record status:', data);
+      setStatus(data.status); 
+
+      // Update text based on status
+      let newText = "";
+      if (data.status === 'Abnormal') {
+        newText = 'You should go see a doctor!💀🧻🚽';
+      } else if (data.status === 'Worrisome') {
+        newText = 'Hmmm, Interesting... 🤔';
+      } else if (data.status === 'Normal') {
+        newText = 'Everything is okay, Keep do it!';
+      } else {
+        newText = 'Have you poop yet, Please tell us 😔';
+      }
+      
+      setFullText(newText);
+      
+    } catch (error) {
+      console.error('Error fetching record status:', error);
+      setFullText('Please try again later.');
     }
+  };
 
-    const data = await response.json();
-    console.log('Record status:', data);
-    setStatus(data.status); 
-
-    if (data.status === 'Abnormal') {
-      setFullText('You should go see a doctor!💀🧻🚽');
-    } else if (data.status === 'Worrisome') {
-      setFullText('Hmmm, Interesting... 🤔');
-    } else if (data.status === 'Normal') {
-      setFullText('Everything is okay, Keep do it!');
-    } else {
-      setFullText('Have you poop yet, Please tell us 😔');
-    }
-    console.log('Full text:', status);
-  } catch (error) {
-    console.error('Error fetching record status:', error);
-    setFullText('Please try again later.');
-  }
-};
-
-useEffect(() => {
+  useEffect(() => {
     fetchRecordStatus();
-  }
-, []);
+  }, []);
 
   useEffect(() => {
     fetchRecordCountbyDate();
-  }
-, []);
+  }, []);
 
-  // Typewriter effect    
+  
   useEffect(() => {
-    let i = -1;
+    setDisplayedText(''); 
+    setIsTyping(true);
+    
+    let i = 0;
     const interval = setInterval(() => {
-      if (i <= fullText.length - 2) {
+      if (i < fullText.length-1) {
         setDisplayedText((prev) => prev + fullText[i]);
         i++;
       } else {
@@ -160,8 +184,10 @@ useEffect(() => {
         clearInterval(interval);
       }
     }, 60);
+    
     return () => clearInterval(interval);
-  }, []);
+  }, [fullText]); // Dependency on fullText
+
   const handleOpenAddModal = () => {
     setShowAddModal(true);
   };
@@ -169,6 +195,7 @@ useEffect(() => {
   const handleCloseAddModal = () => {
     setShowAddModal(false);
   };
+
   return (
     <div className="min-h-screen w-full py-10 relative overflow-hidden">
       <div className="flex flex-col font-poppins font-bold w-full">
@@ -192,8 +219,6 @@ useEffect(() => {
                 : Gray
             })`,
           }}
-
-
         >
           <h1 className="font-poppins text-5xl sm:text-5xl md:text-6xl lg:text-8xl flex justify-center items-center mt-10">
             {String(recordCount).padStart(2, '0')}
@@ -210,7 +235,7 @@ useEffect(() => {
         </div>
       </div>
 
-     <div className="flex flex-col lg:flex-row justify-around items-center mt-10 gap-6 lg:gap-0">
+      <div className="flex flex-col lg:flex-row justify-around items-center mt-10 gap-6 lg:gap-0">
         <div className="order-1 lg:order-2">
           <div className="lg:-ml-90 text-2xl font-bold flex justify-center items-center border-4 
           w-[450px] sm:w-[500px] md:w-[600px] h-[98px] rounded-lg ">
@@ -219,8 +244,8 @@ useEffect(() => {
         </div>
         <div className="order-2 lg:order-1">
           <img
-            src={Please}
-            alt="Please"
+            src={getStatusImage()}
+            alt={recordCount === 0 || recordCount === '00' ? "Good" : status || "Please"}
             className={`w-32 sm:w-36 ${isTyping ? 'animate-shake' : ''}`}
           />
         </div>
@@ -231,6 +256,7 @@ useEffect(() => {
           <img src={AddIcon} onClick={handleOpenAddModal} alt="Add Icon" />
         </div>
       )}
+      
       {/* Add Modal */}
       {showAddModal && (
         <AddEditModal

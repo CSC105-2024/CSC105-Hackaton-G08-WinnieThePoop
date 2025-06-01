@@ -1,20 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import close from '../../assets/Close.svg';
 import LogoBorderS from '../../assets/LogoBorderS.svg';
-import DropdownIcon from '../../assets/DropdownIcon.svg'
+import DropdownIcon from '../../assets/DropdownIcon.svg';
 import axios from "axios";
 
-const AddEdit = ({ isOpen, onClose, onSave }) => {
+const Edit = ({ isOpen, onClose, onSave, initialData }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedTexture, setSelectedTexture] = useState("");
   const [showColorDropdown, setShowColorDropdown] = useState(false);
   const [showTextureDropdown, setShowTextureDropdown] = useState(false);
-  
+
   const token = localStorage.getItem("token");
 
-  // Color options - Updated to match Prisma enum values
   const colors = [
     { value: "Brown", label: "Brown" },
     { value: "Yellow", label: "Yellow" },
@@ -24,7 +23,6 @@ const AddEdit = ({ isOpen, onClose, onSave }) => {
     { value: "Gray", label: "Gray" },
   ];
 
-  // Texture options - Updated to match Prisma enum values
   const textures = [
     { value: "HardLump", label: "Separate hard lumps" },
     { value: "Sausage", label: "Sausage shape with cracks surface" },
@@ -33,95 +31,51 @@ const AddEdit = ({ isOpen, onClose, onSave }) => {
     { value: "Liquid", label: "Liquid consistency with no solid pieces" },
   ];
 
-  const saveTask = async () => {
+  useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.RecordName || "");
+      setDescription(initialData.RecordDescription || "");
+      setSelectedColor(initialData.RecordColor || "");
+      setSelectedTexture(initialData.RecordTexture || "");
+    }
+  }, [initialData]);
+
+  const updateTask = async () => {
     try {
       if (!token) {
         alert("Authentication token not found. Please log in again.");
         return;
       }
 
-      const today = new Date().toISOString();
-      
-      let todayRecordCount = 0;
-      
-      try {
-        const responseCount = await axios.get(
-          "http://localhost:3000/record",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        
-        console.log("Fetch records response:", responseCount.data);
-        
-        const records = responseCount.data.records || responseCount.data || [];
-
-        const todayDateOnly = new Date().toISOString().split('T')[0];
-        const todayRecord = records.filter(record => {
-          const recordDate = new Date(record.createdAt).toISOString().split('T')[0];
-          return recordDate === todayDateOnly;
-        });
-        
-        todayRecordCount = todayRecord.length;
-      } catch (fetchError) {
-        console.warn("Could not fetch existing records for counting:", fetchError);
-      }
-      const recordName = title.trim() || `Poop ${todayRecordCount + 1}`;
-
       const payload = {
-        RecordName: recordName,
+        RecordName: title.trim(),
         RecordDescription: description,
         RecordColor: selectedColor,
         RecordTexture: selectedTexture,
-        RecordStatus: "Normal"
       };
 
-      console.log("Creating record with payload:", payload);
-
-      const response = await axios.post(
-        "http://localhost:3000/record",
+      const response = await axios.put(
+        `http://localhost:3000/record/${initialData.RecordId}`,
         payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
         }
       );
 
-      console.log("Create record response:", response.data);
-
-      setTitle("");
-      setDescription("");
-      setSelectedColor("");
-      setSelectedTexture("");
-      
       if (onSave) {
         onSave(response.data.record || response.data);
       }
-      
+
       onClose();
-      
+
     } catch (error) {
-      console.error("Full error object:", error);
-      
-      if (error.response) {
-        console.error("Error response data:", error.response.data);
-        console.error("Error response status:", error.response.status);
-        console.error("Error response headers:", error.response.headers);
-        
-        const errorMessage = error.response.data?.error || error.response.data?.message || "Server error occurred";
-        alert(`Failed to save record: ${errorMessage}`);
-      } else if (error.request) {
-        
-        console.error("Error request:", error.request);
-        alert("Failed to save record: No response from server. Please check your connection.");
-      } else {
-        console.error("Error message:", error.message);
-        alert(`Failed to save record: ${error.message}`);
-      }
+      console.error("Error updating record:", error);
+      const message =
+        error.response?.data?.message || error.response?.data?.error || error.message;
+      alert(`Failed to update record: ${message}`);
     }
   };
 
@@ -130,12 +84,11 @@ const AddEdit = ({ isOpen, onClose, onSave }) => {
   };
 
   const handleSave = () => {
-
     if (!selectedColor || !selectedTexture) {
       alert("Please select both color and texture.");
       return;
     }
-    saveTask();
+    updateTask();
   };
 
   const toggleColorDropdown = () => {
@@ -159,11 +112,11 @@ const AddEdit = ({ isOpen, onClose, onSave }) => {
   };
 
   const getSelectedColorObject = () => {
-    return colors.find(color => color.value === selectedColor);
+    return colors.find((c) => c.value === selectedColor);
   };
 
   const getSelectedTextureObject = () => {
-    return textures.find(texture => texture.value === selectedTexture);
+    return textures.find((t) => t.value === selectedTexture);
   };
 
   const handleOverlayClick = (e) => {
@@ -175,7 +128,7 @@ const AddEdit = ({ isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-gray-400/40 flex items-center justify-center z-50 p-10 sm:p-4 overflow-hidden"
       onClick={handleOverlayClick}
     >
@@ -192,7 +145,7 @@ const AddEdit = ({ isOpen, onClose, onSave }) => {
           </div>
 
           <div className="w-full">
-            <div className="flex justify-center ">
+            <div className="flex justify-center">
               <img
                 src={LogoBorderS}
                 alt="LogoBorderS"
@@ -225,19 +178,16 @@ const AddEdit = ({ isOpen, onClose, onSave }) => {
                     <img className="w-5 h-5" src={DropdownIcon} alt="Color dropdown" />
                   </div>
                   {showColorDropdown && (
-                    <div className="absolute top-full left-0 right-0 mt-1 text-gray-700 bg-white rounded-md shadow-lg z-10 border border-gray-200 max-h-48 overflow-auto">
-                      <div className="py-1">
-                        {colors.map((color) => (
-                          <button
-                            key={color.value}
-                            type="button"
-                            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                            onClick={() => selectColor(color)}
-                          >
-                            {color.label}
-                          </button>
-                        ))}
-                      </div>
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10 max-h-48 overflow-auto">
+                      {colors.map((color) => (
+                        <button
+                          key={color.value}
+                          className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                          onClick={() => selectColor(color)}
+                        >
+                          {color.label}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -256,19 +206,16 @@ const AddEdit = ({ isOpen, onClose, onSave }) => {
                     <img className="w-5 h-5" src={DropdownIcon} alt="Texture dropdown" />
                   </div>
                   {showTextureDropdown && (
-                    <div className="absolute top-full left-0 right-0 mt-1 text-gray-700 bg-white rounded-md shadow-lg z-10 border border-gray-200 max-h-48 overflow-auto">
-                      <div className="py-1">
-                        {textures.map((texture) => (
-                          <button
-                            key={texture.value}
-                            type="button"
-                            className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 gap-1"
-                            onClick={() => selectTexture(texture)}
-                          >
-                            {texture.label}
-                          </button>
-                        ))}
-                      </div>
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10 max-h-48 overflow-auto">
+                      {textures.map((texture) => (
+                        <button
+                          key={texture.value}
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
+                          onClick={() => selectTexture(texture)}
+                        >
+                          {texture.label}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -308,4 +255,4 @@ const AddEdit = ({ isOpen, onClose, onSave }) => {
   );
 };
 
-export default AddEdit;
+export default Edit;
