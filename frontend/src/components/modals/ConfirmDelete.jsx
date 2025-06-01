@@ -17,7 +17,7 @@ const ConfirmModal = ({ isOpen, onConfirm, onClose }) => {
   return (
     <div 
       className="font-poppins font-bold fixed inset-0 bg-gray-400/40 flex items-center justify-center z-50"
-      onClick={handleOverlayClick}  // Add this line
+      onClick={handleOverlayClick}  
     >
       <div className="bg-white p-6 rounded-lg shadow-lg border-2 text-center w-65 h-50 sm:w-75 sm:h-52 relative">
         <div className="flex justify-center -mt-10 mb-2">

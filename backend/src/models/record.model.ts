@@ -210,7 +210,29 @@ export const fetchDailyStatus = async (userId: number, dateParam: string) => {
       },
     });
 
-    return hasRed ? 'Abnormal' : 'Normal';
+    const hasYellow = await prisma.record.findFirst({
+      where: {
+        UserId: userId,
+        RecordDate: {
+          gte: startOfDay,
+          lt: endOfDay,
+        },
+        RecordStatus: 'Worrisome',
+      },
+    });
+    if (!hasRed && !hasYellow) {
+      return 'Normal';
+    }
+    else if (hasRed && hasYellow) {
+      return 'Abnormal';
+    }
+    else if (hasRed) {
+      return 'Abnormal';
+    }
+    else if (hasYellow) {
+      return 'Worrisome';
+    }
+
   } catch (error) {
     console.error('Error checking daily status:', error);
     throw error;
